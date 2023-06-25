@@ -1,1 +1,0 @@
-worker: python meetup\\bot\\management\\commands\\bot.py
