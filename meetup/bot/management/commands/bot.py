@@ -250,13 +250,13 @@ def callback(call):
             }
             response = requests.get('https://api.telegram.org/bot'+token+'/sendMessage', params=params)
 
-    elif call.data == 'mailing':
-        for user in get_users():
-            params = {
-                'chat_id': user[0],
-                'text': mailing(),
-            }
-            response = requests.get('https://api.telegram.org/bot'+token+'/sendMessage', params=params)
+#    elif call.data == 'mailing':
+#        for user in get_users():
+#            params = {
+#                'chat_id': user[0],
+#                'text': mailing(),
+#            }
+#            response = requests.get('https://api.telegram.org/bot'+token+'/sendMessage', params=params)
 
 
     # elif call.data == 'home':
