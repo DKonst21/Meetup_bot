@@ -14,7 +14,7 @@ from django.core.management.base import BaseCommand
 # from meetup.bot.models import User, Speaker, Message
 
 load_dotenv()
-token = '6125022357:AAHc-FiPd5qsIyHhKaAiTKIft-1h1Jq34HU'
+token = os.getenv('TELEGRAM_MEETUP_BOT_API_TOKEN')
 bot = telebot.TeleBot(token)
 # conn = sqlite3.connect('db.meetup', check_same_thread=False)
 path = Path("meetup", "db.meetup")
