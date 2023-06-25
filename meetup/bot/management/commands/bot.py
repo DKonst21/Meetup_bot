@@ -128,7 +128,8 @@ def start_meetup(message):
 
 @bot.message_handler(content_types=['text']) # Пришли сообщение чтобы начать
 def start(message):
-    if message.from_user.username == 'AbRamS0404': #Konstantin_Derienko
+    print(message.from_user)
+    if message.from_user.username == 'yellowkush88': #Konstantin_Derienko 'yellowkush88''AbRamS0404'
         markup = types.InlineKeyboardMarkup(row_width=2)
         timeline = types.InlineKeyboardButton('График выступлений', callback_data='timeline')
         timeline2 = types.InlineKeyboardButton('Управлять выступлениями', callback_data='timeline2')
@@ -264,16 +265,16 @@ def callback(call):
     #         response = requests.get('https://api.telegram.org/bot'+token+'/sendMessage', params=params)
 
 
-    # elif call.data == 'home':
-    #     bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.id)
-    #     start(call.message)
+    elif call.data == 'home':
+        bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.id)
+        start(call.message)
 
 
 class Command(BaseCommand):
     help = 'телеграм бот собраний'
 
     def handle(self, *args, **options):
-        # print(bot.get_me())
+        print(bot.get_me())
         while True:
             try:
                 bot.polling(none_stop=True)
