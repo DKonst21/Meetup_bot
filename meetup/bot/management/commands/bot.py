@@ -107,6 +107,18 @@ def get_users():
     tg_id = cursor.fetchall()
     return tg_id
 
+def start_meetup(message):
+    meet = message.text
+    cursor.execute(f"SELECT delay FROM bot_speaker WHERE id = '{int(meet)}';")
+    delay = cursor.fetchone()
+    print(type(delay[0]))
+    if delay[0] == 0:
+        cursor.execute(f"UPDATE bot_speaker SET delay = '1' WHERE id = '{meet}';")
+        conn.commit()
+    else:
+        cursor.execute(f"UPDATE bot_speaker SET delay = '0' WHERE id = '{meet}'")
+        conn.commit()
+
 
 # def mailing():
 #     cursor.execute(f"SELECT message FROM bot_message;")
@@ -117,10 +129,11 @@ def get_users():
 def start(message):
     if message.from_user.username == 'AbRamS0404': #Konstantin_Derienko
         markup = types.InlineKeyboardMarkup(row_width=2)
-        timeline = types.InlineKeyboardButton('График выступлений', callback_data='timeline2')
+        timeline = types.InlineKeyboardButton('График выступлений', callback_data='timeline')
+        timeline2 = types.InlineKeyboardButton('Управлять выступлениями', callback_data='timeline2')
         send_message = types.InlineKeyboardButton('Оповестить об изменениях', callback_data='send')
-        mailing = types.InlineKeyboardButton('Отправить сообщение', callback_data='mailing')
-        markup.add(timeline, send_message, mailing)
+        #mailing = types.InlineKeyboardButton('Отправить сообщение', callback_data='mailing')
+        markup.add(timeline, timeline2, send_message)
         bot.send_message(message.chat.id, '\nпосмотрим расписание?\n', reply_markup=markup)
 
     elif get_name(message) == 2: # добавить сравнение времени спикера и текущего времени
@@ -153,66 +166,57 @@ def callback(call):
                                 parse_mode='Markdown')
 
     elif call.data == 'timeline': # Готово
-        markup = types.InlineKeyboardMarkup(row_width=1)
-        home = types.InlineKeyboardButton('Домой', callback_data='home')
-        markup.add(home)
-
         for number, meet in enumerate(get_timeline()):
-            speaker = meet[0]
             start_time = meet[1]
             end_time = meet[2]
             meet_theme = meet[3]
             if number == 0:
                 bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
-                                      text=f'\nс {start_time} до {end_time} \nтема: {meet_theme}')
+                                      text=f'\nс {start_time} до {end_time}\nтема: {meet_theme}')
                 time.sleep(0.5)
             elif number == len(get_timeline())-1:
                 bot.send_message(call.message.chat.id,
-                                 text=f'\nс {start_time} до {end_time} \nтема: {meet_theme}',
-                                 reply_markup=markup)
+                                 text=f'\nс {start_time} до {end_time}\nтема: {meet_theme}')
                 time.sleep(0.5)
             else:
-                bot.send_message(call.message.chat.id, text=f'\nс {start_time} до {end_time} \nтема: {meet_theme}')
+                bot.send_message(call.message.chat.id, text=f'\nс {start_time} до {end_time}\nтема: {meet_theme}')
                 time.sleep(0.5)
+        bot.send_message(call.message.chat.id,
+                         text=f'\n\nдля возврата домой отправь мне сообщение')
 
     elif call.data == 'timeline2': # Готово
         for number, meet in enumerate(get_timeline()):
+            print(meet)
             in_process = 'не идет'
-            if meet[4] == 'True':
+            if meet[4] == 1:
                 in_process = 'идет'
-            speaker = meet[0]
+            number_of_meet = meet[0]
             start_time = meet[1]
             end_time = meet[2]
             meet_theme = meet[3]
             if number == 0:
-                markup = types.InlineKeyboardMarkup(row_width=2)
-                start = types.InlineKeyboardButton('Начал', callback_data='start')
-                finish = types.InlineKeyboardButton('Закончил', callback_data='finish')
-                markup.add(start, finish)
                 bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
-                                      text=f'\nс {start_time} до {end_time} \nтема: {meet_theme}\n\nВыступление {in_process}',
-                                      reply_markup=markup)
+                                      text=f'\n{number_of_meet} с {start_time} до {end_time} \nтема: {meet_theme}\n\nВыступление {in_process}')
                 time.sleep(0.5)
-
 
             else:
-                markup = types.InlineKeyboardMarkup(row_width=2)
-                start = types.InlineKeyboardButton('Начал', callback_data='start')
-                finish = types.InlineKeyboardButton('Закончил', callback_data='finish')
-                markup.add(start, finish)
-                bot.send_message(call.message.chat.id, text=f'\nс {start_time} до {end_time} \nтема: {meet_theme}\n\nВыступление {in_process}',
-                                 reply_markup=markup)
+                bot.send_message(call.message.chat.id, text=f'\n{number_of_meet} с {start_time} до {end_time} \nтема: {meet_theme}\n\nВыступление {in_process}')
                 time.sleep(0.5)
 
-        bot.send_message(call.message.chat.id, text='\n\n для возврата домой отправь мне сообщение\n')
+        markup = types.InlineKeyboardMarkup(row_width=2)
+        start = types.InlineKeyboardButton('Начал', callback_data='start')
+        finish = types.InlineKeyboardButton('Закончил', callback_data='finish')
+        markup.add(start, finish)
+        sent = bot.send_message(call.message.chat.id, text='\nотправь номер мероприятия и нажми "началось" или "закончилось"', reply_markup=markup)
+        bot.register_next_step_handler(sent, start_meetup)
 
     elif call.data == 'start':
-        markup = types.InlineKeyboardMarkup(row_width=1)
-        timeline = types.InlineKeyboardButton('Вернуться к графику', callback_data='timeline2')
-        markup.add(timeline)
-        now_time()
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
+                              text='\nвыступление началось\n\n для возврата домой отправь мне сообщение\n')
 
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id, text='\nвыступление началось\n\n для возврата домой отправь мне сообщение\n', reply_markup=markup)
+    elif call.data == 'finish':
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
+                              text='\nвыступление закончилось\n\n для возврата домой отправь мне сообщение\n')
 
     elif call.data == 'ask_question': # готово
         markup = types.InlineKeyboardMarkup(row_width=2)
@@ -250,13 +254,13 @@ def callback(call):
             }
             response = requests.get('https://api.telegram.org/bot'+token+'/sendMessage', params=params)
 
-#    elif call.data == 'mailing':
-#        for user in get_users():
-#            params = {
-#                'chat_id': user[0],
-#                'text': mailing(),
-#            }
-#            response = requests.get('https://api.telegram.org/bot'+token+'/sendMessage', params=params)
+    elif call.data == 'mailing':
+        for user in get_users():
+            params = {
+                'chat_id': user[0],
+                'text': mailing(),
+            }
+            response = requests.get('https://api.telegram.org/bot'+token+'/sendMessage', params=params)
 
 
     # elif call.data == 'home':
