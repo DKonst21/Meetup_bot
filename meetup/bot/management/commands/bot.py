@@ -164,15 +164,15 @@ def callback(call):
             meet_theme = meet[3]
             if number == 0:
                 bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
-                                      text=f'\nс {start_time} до {end_time} тема: {meet_theme} спикер {speaker}')
+                                      text=f'\nс {start_time} до {end_time} \nтема: {meet_theme}')
                 time.sleep(0.5)
             elif number == len(get_timeline())-1:
                 bot.send_message(call.message.chat.id,
-                                 text=f'\nс {start_time} до {end_time} тема: {meet_theme} спикер {speaker}',
+                                 text=f'\nс {start_time} до {end_time} \nтема: {meet_theme}',
                                  reply_markup=markup)
                 time.sleep(0.5)
             else:
-                bot.send_message(call.message.chat.id, text=f'\nс {start_time} до {end_time} тема: {meet_theme} спикер {speaker}')
+                bot.send_message(call.message.chat.id, text=f'\nс {start_time} до {end_time} \nтема: {meet_theme}')
                 time.sleep(0.5)
 
     elif call.data == 'timeline2': # Готово
@@ -190,7 +190,7 @@ def callback(call):
                 finish = types.InlineKeyboardButton('Закончил', callback_data='finish')
                 markup.add(start, finish)
                 bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
-                                      text=f'\nс {start_time} до {end_time} тема: {meet_theme}\n спикер {speaker}.\nВыступление {in_process}',
+                                      text=f'\nс {start_time} до {end_time} \nтема: {meet_theme}\n\nВыступление {in_process}',
                                       reply_markup=markup)
                 time.sleep(0.5)
 
@@ -200,7 +200,7 @@ def callback(call):
                 start = types.InlineKeyboardButton('Начал', callback_data='start')
                 finish = types.InlineKeyboardButton('Закончил', callback_data='finish')
                 markup.add(start, finish)
-                bot.send_message(call.message.chat.id, text=f'\nс {start_time} до {end_time} тема: {meet_theme}\n спикер {speaker}.\nВыступление {in_process}',
+                bot.send_message(call.message.chat.id, text=f'\nс {start_time} до {end_time} \nтема: {meet_theme}\n\nВыступление {in_process}',
                                  reply_markup=markup)
                 time.sleep(0.5)
 
