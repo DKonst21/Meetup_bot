@@ -6,15 +6,16 @@ import time
 # from main_functions import show_timeline
 import telebot
 from telebot import types
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 from pathlib import Path
 
 from django.core.management.base import BaseCommand
 # from django.conf import settings
 # from meetup.bot.models import User, Speaker, Message
 
-load_dotenv()
-token = os.getenv('TELEGRAM_MEETUP_BOT_API_TOKEN')
+# load_dotenv()
+# token = os.getenv('TELEGRAM_MEETUP_BOT_API_TOKEN')
+token = '5997099999:AAExP16I4FUFWZfn3NLWhF4yUI00e-pQi3k'
 bot = telebot.TeleBot(token)
 # conn = sqlite3.connect('db.meetup', check_same_thread=False)
 path = Path("meetup", "db.meetup")
