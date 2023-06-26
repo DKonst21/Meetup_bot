@@ -3,21 +3,17 @@ import sqlite3
 import requests
 from datetime import datetime
 import time
-# from main_functions import show_timeline
 import telebot
 from telebot import types
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 from pathlib import Path
 
 from django.core.management.base import BaseCommand
-# from django.conf import settings
-# from meetup.bot.models import User, Speaker, Message
 
-# load_dotenv()
-# token = os.getenv('TELEGRAM_MEETUP_BOT_API_TOKEN')
-token = '5997099999:AAExP16I4FUFWZfn3NLWhF4yUI00e-pQi3k'
+
+load_dotenv()
+token = '6125022357:AAHc-FiPd5qsIyHhKaAiTKIft-1h1Jq34HU'
 bot = telebot.TeleBot(token)
-# conn = sqlite3.connect('db.meetup', check_same_thread=False)
 path = Path("meetup", "db.meetup")
 conn = sqlite3.connect(path, check_same_thread=False)
 cursor = conn.cursor()
@@ -46,7 +42,7 @@ def get_timeline(): # выдает боту график мероприятия
 
 
 def check_meet(speaker_id): #проверяет задержку выступления
-    cursor.execute(f"SELECT id FROM bot_user WHERE tg_id == {speaker_id}")
+    cursor.execute(f"SELECT id FROM bot_user WHERE tg_id == '{speaker_id}'")
     name = cursor.fetchone()
     cursor.execute(f"SELECT delay FROM bot_speaker WHERE user_id == '{name[0]}'")
     return cursor.fetchone()[0]
@@ -128,12 +124,11 @@ def start_meetup(message):
 
 @bot.message_handler(content_types=['text']) # Пришли сообщение чтобы начать
 def start(message):
-    print(get_name(message())
-    if message.from_user.username == 'yellowkush88': #Konstantin_Derienko 'yellowkush88''AbRamS0404'
+    if message.from_user.username == 'AbRam0404': #Konstantin_Derienko
         markup = types.InlineKeyboardMarkup(row_width=2)
         timeline = types.InlineKeyboardButton('График выступлений', callback_data='timeline')
         timeline2 = types.InlineKeyboardButton('Управлять выступлениями', callback_data='timeline2')
-        send_message = types.InlineKeyboardButton('Нажмите на кнопку для оповещения всех пользователей об изменениях', callback_data='send')
+        send_message = types.InlineKeyboardButton('Оповестить об изменениях', callback_data='send')
         #mailing = types.InlineKeyboardButton('Отправить сообщение', callback_data='mailing')
         markup.add(timeline, timeline2, send_message)
         bot.send_message(message.chat.id, '\nпосмотрим расписание?\n', reply_markup=markup)
@@ -249,30 +244,32 @@ def callback(call):
 
     elif call.data == 'send':
         for user in get_users():
+            print(user)
             params = {
                 'chat_id': user[0],
                 'text': 'График мероприятий изменен',
             }
             response = requests.get('https://api.telegram.org/bot'+token+'/sendMessage', params=params)
 
-    # elif call.data == 'mailing':
-    #     for user in get_users():
-    #         params = {
-    #             'chat_id': user[0],
-    #             'text': mailing(),
-    #         }
-    #         response = requests.get('https://api.telegram.org/bot'+token+'/sendMessage', params=params)
+    elif call.data == 'mailing':
+        for user in get_users():
+            params = {
+                'chat_id': user[0],
+                'text': mailing(),
+            }
+            response = requests.get('https://api.telegram.org/bot'+token+'/sendMessage', params=params)
 
 
-    elif call.data == 'home':
-        bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.id)
-        start(call.message)
+    # elif call.data == 'home':
+    #     bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.id)
+    #     start(call.message)
 
 
 class Command(BaseCommand):
     help = 'телеграм бот собраний'
 
     def handle(self, *args, **options):
+        # print(bot.get_me())
         while True:
             try:
                 bot.polling(none_stop=True)
