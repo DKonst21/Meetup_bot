@@ -133,7 +133,7 @@ def start(message):
         markup = types.InlineKeyboardMarkup(row_width=2)
         timeline = types.InlineKeyboardButton('График выступлений', callback_data='timeline')
         timeline2 = types.InlineKeyboardButton('Управлять выступлениями', callback_data='timeline2')
-        send_message = types.InlineKeyboardButton('Оповестить об изменениях', callback_data='send')
+        send_message = types.InlineKeyboardButton('Нажмите на кнопку для оповещения всех пользователей об изменениях', callback_data='send')
         #mailing = types.InlineKeyboardButton('Отправить сообщение', callback_data='mailing')
         markup.add(timeline, timeline2, send_message)
         bot.send_message(message.chat.id, '\nпосмотрим расписание?\n', reply_markup=markup)
