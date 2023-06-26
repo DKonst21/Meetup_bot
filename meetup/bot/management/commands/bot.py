@@ -128,7 +128,7 @@ def start_meetup(message):
 
 @bot.message_handler(content_types=['text']) # Пришли сообщение чтобы начать
 def start(message):
-    print(message.from_user)
+    print(get_name(message())
     if message.from_user.username == 'yellowkush88': #Konstantin_Derienko 'yellowkush88''AbRamS0404'
         markup = types.InlineKeyboardMarkup(row_width=2)
         timeline = types.InlineKeyboardButton('График выступлений', callback_data='timeline')
@@ -138,7 +138,7 @@ def start(message):
         markup.add(timeline, timeline2, send_message)
         bot.send_message(message.chat.id, '\nпосмотрим расписание?\n', reply_markup=markup)
 
-    elif get_name(message) == 2: # добавить сравнение времени спикера и текущего времени
+    elif get_name(message) == 1: # добавить сравнение времени спикера и текущего времени
         markup = types.InlineKeyboardMarkup(row_width=1)
         questions = types.InlineKeyboardButton('Вопросы слушателей', callback_data='questions')
         timeline = types.InlineKeyboardButton('График выступлений', callback_data='timeline')
