@@ -249,7 +249,6 @@ def callback(call):
 
     elif call.data == 'send':
         for user in get_users():
-            print(user)
             params = {
                 'chat_id': user[0],
                 'text': 'График мероприятий изменен',
@@ -274,7 +273,6 @@ class Command(BaseCommand):
     help = 'телеграм бот собраний'
 
     def handle(self, *args, **options):
-        print(bot.get_me())
         while True:
             try:
                 bot.polling(none_stop=True)
