@@ -124,8 +124,8 @@ def start_meetup(message):
 
 @bot.message_handler(content_types=['text']) # Пришли сообщение чтобы начать
 def start(message):
-    if message.from_user.username == 'yellowkush88': #Konstantin_Derienko
-        markup = types.InlineKeyboardMarkup(row_width=2)
+    if message.from_user.username == 'AbRamS0404': #Konstantin_Derienko
+        markup = types.InlineKeyboardMarkup(row_width=1)
         timeline = types.InlineKeyboardButton('График выступлений', callback_data='timeline')
         timeline2 = types.InlineKeyboardButton('Управлять выступлениями', callback_data='timeline2')
         send_message = types.InlineKeyboardButton('Оповестить об изменениях', callback_data='send')
@@ -144,7 +144,6 @@ def start(message):
         bot.send_message(message.chat.id, '\nвыбери нужный пункт', reply_markup=markup)
 
     else:
-
         markup=types.InlineKeyboardMarkup(row_width=1)
         timeline=types.InlineKeyboardButton('График выступлений', callback_data='timeline')
         ask_question=types.InlineKeyboardButton('Задать вопрос', callback_data='ask_question')
